@@ -44,7 +44,8 @@ const routes = [
         meta: { title: '全铝浴室柜 - 洗刷刷全铝家具' }
       },
       {
-        path: 'news',
+        // 近期资讯：/xishuashua/news 为清单页，/xishuashua/news/文章标识 直接打开某一条
+        path: 'news/:id?',
         name: 'xss-news',
         component: XssNewsView,
         meta: { title: '近期资讯 - 洗刷刷全铝家具' }

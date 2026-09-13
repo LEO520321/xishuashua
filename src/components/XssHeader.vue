@@ -13,7 +13,7 @@
       <nav class="nav-pc">
         <a class="nav-link" href="#about" @click.prevent="scrollTo('about')">公司简介</a>
         <a class="nav-link" href="#products" @click.prevent="scrollTo('products')">产品介绍</a>
-        <a class="nav-link" href="#news" @click.prevent="scrollTo('news')">近期资讯</a>
+        <router-link class="nav-link" to="/xishuashua/news">近期资讯</router-link>
         <a class="nav-link" href="#advantages" @click.prevent="scrollTo('advantages')">优势与服务</a>
         <a class="nav-link" href="#contact" @click.prevent="scrollTo('contact')">联系我们</a>
       </nav>
@@ -42,7 +42,7 @@
       <nav class="drawer-nav">
         <a class="drawer-link" href="#about" @click.prevent="scrollTo('about'); closeDrawer()">公司简介</a>
         <a class="drawer-link" href="#products" @click.prevent="scrollTo('products'); closeDrawer()">产品介绍</a>
-        <a class="drawer-link" href="#news" @click.prevent="scrollTo('news'); closeDrawer()">近期资讯</a>
+        <router-link class="drawer-link" to="/xishuashua/news" @click="closeDrawer()">近期资讯</router-link>
         <a class="drawer-link" href="#advantages" @click.prevent="scrollTo('advantages'); closeDrawer()">优势与服务</a>
         <a class="drawer-link" href="#contact" @click.prevent="scrollTo('contact'); closeDrawer()">联系我们</a>
       </nav>
@@ -176,6 +176,24 @@ function closeDrawer() {
   color: #6B5C4A;
 }
 
+/* 当前所在页面（近期资讯）高亮 */
+.nav-link.router-link-active {
+  color: #6B5C4A;
+  font-weight: 600;
+  position: relative;
+}
+
+.nav-link.router-link-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: #6B5C4A;
+}
+
 /* ============ Mobile: Hamburger ============ */
 .hamburger {
   display: none;
@@ -276,6 +294,12 @@ function closeDrawer() {
 .drawer-link:hover {
   background: #F5F1EC;
   color: #6B5C4A;
+}
+
+.drawer-link.router-link-active {
+  background: #F5F1EC;
+  color: #6B5C4A;
+  font-weight: 600;
 }
 
 /* ============ Responsive ============ */

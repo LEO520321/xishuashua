@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { sortedNews, findNewsById, newsCategories } from '@/data/news'
 
@@ -120,8 +120,11 @@ const props = defineProps({
   showFilter: { type: Boolean, default: false },
   /* 左栏是否吸顶 */
   sticky: { type: Boolean, default: true },
-  /* 是否把选中项同步到 URL ?id=xxx（独立页面开启，首页模块关闭） */
-  syncQuery: { type: Boolean, default: false },
+  /* 选中项与 URL 的同步方式：
+     'none'  不同步（首页等嵌入场景）
+     'param' 路径参数，形如 /xishuashua/news/文章标识
+     'query' 查询串，形如 /xishuashua/news?id=文章标识 */
+  syncMode: { type: String, default: 'none' },
   /* 左栏清单最大高度（仅 sticky 时生效） */
   listMaxHeight: { type: String, default: 'calc(100vh - 320px)' },
   /* 窄屏下选中后是否滚动到详情 */
@@ -147,21 +150,27 @@ const filteredNews = computed(() => {
 })
 
 /* ---------- 当前选中的资讯 ---------- */
+function readIdFromUrl() {
+  if (props.syncMode === 'param') return route.params.id || ''
+  if (props.syncMode === 'query') return route.query.id || ''
+  return ''
+}
+
 function resolveInitialId() {
-  if (props.syncQuery) {
-    const idFromQuery = route.query.id
-    if (idFromQuery && baseNews.value.some((n) => n.id === idFromQuery)) return idFromQuery
-  }
+  const idFromUrl = readIdFromUrl()
+  if (idFromUrl && baseNews.value.some((n) => n.id === idFromUrl)) return idFromUrl
   return baseNews.value.length ? baseNews.value[0].id : ''
 }
 
 const activeId = ref(resolveInitialId())
 
+/* 支持直接用 URL 打开某一条（含浏览器前进/后退） */
 watch(
-  () => route.query.id,
-  (val) => {
-    if (props.syncQuery && val && baseNews.value.some((n) => n.id === val)) {
-      activeId.value = val
+  () => [route.params.id, route.query.id],
+  () => {
+    const idFromUrl = readIdFromUrl()
+    if (idFromUrl && baseNews.value.some((n) => n.id === idFromUrl)) {
+      activeId.value = idFromUrl
     }
   }
 )
@@ -189,15 +198,34 @@ const nextNews = computed(() =>
 
 function selectNews(id, scroll = true) {
   activeId.value = id
-  if (props.syncQuery && route.query.id !== id) {
-    router.replace({ query: { ...route.query, id } })
-  }
+  syncUrl(id)
+
   // 窄屏下清单在详情上方，选中后滚动到详情
   if (scroll && props.scrollOnSelect && window.innerWidth <= 900 && detailRef.value) {
     const top = detailRef.value.getBoundingClientRect().top + window.pageYOffset - 76
     window.scrollTo({ top, behavior: 'smooth' })
   }
 }
+
+/* 把当前选中项写回 URL，便于刷新保持 / 分享 / 前进后退 */
+function syncUrl(id) {
+  if (props.syncMode === 'param') {
+    if (route.params.id !== id) {
+      router.replace({ name: route.name, params: { ...route.params, id } })
+    }
+  } else if (props.syncMode === 'query') {
+    if (route.query.id !== id) {
+      router.replace({ query: { ...route.query, id } })
+    }
+  }
+}
+
+/* 首次进入且 URL 未指定条目时，把默认选中的第一条写进 URL */
+onMounted(() => {
+  if (props.syncMode !== 'none' && activeId.value && !readIdFromUrl()) {
+    syncUrl(activeId.value)
+  }
+})
 
 /* ---------- 展示辅助 ---------- */
 function tagClass(category) {

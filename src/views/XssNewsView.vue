@@ -15,7 +15,7 @@
           :limit="0"
           :show-filter="true"
           :sticky="true"
-          :sync-query="true"
+          sync-mode="param"
           list-max-height="calc(100vh - 320px)"
         />
       </div>

@@ -83,28 +83,8 @@
       </div>
     </section>
 
-    <!-- ==================== D. Recent News ==================== -->
-    <section id="news" class="section">
-      <div class="container">
-        <h2 class="section-title">近期资讯</h2>
-        <p class="section-subtitle">NEWS</p>
-
-        <XssNewsBoard
-          :limit="4"
-          :show-filter="false"
-          :sticky="true"
-          :sync-query="false"
-          list-max-height="calc(100vh - 300px)"
-        />
-
-        <div class="section-action">
-          <router-link to="/xishuashua/news" class="btn btn-outline">查看全部资讯 &rarr;</router-link>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== E. Advantages & Services ==================== -->
-    <section id="advantages" class="section section-alt">
+    <!-- ==================== D. Advantages & Services ==================== -->
+    <section id="advantages" class="section">
       <div class="container">
         <h2 class="section-title">优势与服务</h2>
         <p class="section-subtitle">ADVANTAGES &amp; SERVICES</p>
@@ -191,8 +171,8 @@
       </div>
     </section>
 
-    <!-- ==================== F. Contact ==================== -->
-    <section id="contact" class="section">
+    <!-- ==================== E. Contact ==================== -->
+    <section id="contact" class="section section-alt">
       <div class="container">
         <h2 class="section-title">联系我们</h2>
         <p class="section-subtitle">CONTACT US</p>
@@ -228,8 +208,6 @@
 </template>
 
 <script setup>
-import XssNewsBoard from '@/components/XssNewsBoard.vue'
-
 function scrollToSection(id) {
   const el = document.getElementById(id)
   if (el) {
